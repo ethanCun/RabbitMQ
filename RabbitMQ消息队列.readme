@@ -1,0 +1,79 @@
+
+Rabbit对数据一致性要求高,对消息丢失处理较好，优于RocketMQ；
+
+RabbitMQ基于AMQP协议，Advanced Message Queuing Protocol；
+
+RabbitMQ下载安装链接： https://www.rabbitmq.com/download.html；
+因为RabbitMQ基于erlang， 所以需要安装erlang环境；
+erlang下载地址： https://www.erlang.org/downloads
+
+# linux安装RabbitMQ： https://www.cnblogs.com/gaoyuechen/p/8991243.html
+# linux下启动RabbitMQ默认会读取 /etc/rabbitmq/rabbitmq.config文件
+    这个文件是不存在的，需要手动创建
+   但是rabbitmq提供了配置模板， 模板的位置在：
+    /usr/share/doc/rabbitmq-server-版本号/rabbitmq.config.example
+# 在/etc/rabbitmq/rabbitmq.config中打开来宾账号, 后面的
+ 逗号也要去掉{loopback_users, []}
+# 启动一些插件，允许使用管理界面:
+    sudo rabbitmq-plugins enable rabbitmq_management
+# 注意，查看管理端，还需要防火墙添加端口：15672
+firewall-cmd --zone=public --add-port=15672/tcp --permanent
+firewall-cmd --reload
+firewall-cmd --list-ports
+
+# 其他相关命令：
+     sudo /sbin/service rabbitmq-server status  # 查看服务状态
+     service rabbitmq-server stop
+     service rabbitmq-server start
+
+    或者：
+        systemctl status rabbitmq-server
+        systemctl start rabbitmq-server
+        systemctl stop rabbitmq-server
+        systemctl restart rabbitmq-server
+
+    rabbitmqctl help  更多命令
+
+    插件命令
+    rabbitmq-plugins enable|list|disable
+
+
+# mac使用brew安装，mac安装后，默认位置： /usr/local/Cellar/rabbitmq/<version>/ ;
+erlang也在这个目录下
+
+添加环境变量：
+    vim ~/.bashrc
+    export PATH=$PATH:/usr/local/sbin
+
+
+启动rabbitmq： rabbitmq-server
+
+RabbitMQ默认访问链接：http://127.0.0.1:15672/  账户和密码默认是guest guest
+
+可以在admin下添加账户和密码；
+
+# 使用命令行添加用户和权限：
+
+    ## 进入sbin目录
+    cd /usr/local/Cellar/rabbitmq/3.7.12/sbin
+    ## 添加账号
+    ./rabbitmqctl add_user rabbit rabbit
+    ## 添加访问权限
+    ./rabbitmqctl set_permissions -p "/" rabbit ".*" ".*" ".*"
+    ## 设置超管权限
+    ./rabbitmqctl set_user_tags rabbit administrator
+
+
+RabbitMQ角色：
+    Publisher Application: 消息生产者
+    Consumer Application:消息消费者
+    Server: RabbitMQ服务节点
+    Virtual Host: 虚拟主机
+    Exchange: 交换机
+    Message Queue: 消息队列
+
+
+
+
+
+
