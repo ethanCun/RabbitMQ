@@ -68,7 +68,7 @@ RabbitMQ角色：
     Publisher Application: 消息生产者
     Consumer Application:消息消费者
     Server: RabbitMQ服务节点
-    Virtual Host: 虚拟主机
+    Virtual Host: 虚拟主机, 相当于mysql中的库, 需要权限，将虚拟主机和用户绑定
     Exchange: 交换机
     Message Queue: 消息队列
 
@@ -76,4 +76,57 @@ RabbitMQ角色：
 
 
 
+消息的发送：
+    RabbitMQ消息的发送和消费都是通过通道Channel来操作的，通道需要绑定对应的队列；
+    生产者发送消息前需要先和服务器建立心跳包
+
+
+RabbitMQ模型：
+    https://www.rabbitmq.com/getstarted.html
+    1. Simple 一个生产者 一个队列 一个消费者 没有交换机（默认交换机）
+    2. work queues： 工作队列， 解决消息堆积的问题 一个生产者 一个队列 多个消费者 没有交换机
+
+        多个消费者自动确认消费的情况下， 多个消费者消费的消息是循环模式， 相当于RocketMQ
+        中的负载均衡模式，
+        如何实现多个消费者的能者多劳模式：
+            1. 设置消费者每次只能通过通道获取一个需要消费的消息：
+            channel.basicQos(1);
+            2. 关闭消费者的消息自动确认消费机制：
+            3. 消费者完成消费后，手动确认消息被消费：
+             channel.basicConsume("work", false, new DefaultConsumer(channel){
+
+                         @Override
+                         public void handleDelivery(String consumerTag,
+                                                    Envelope envelope,
+                                                    AMQP.BasicProperties properties,
+                                                    byte[] body) throws IOException {
+
+                             System.out.println("消费者2： " + new String(body));
+
+                             //模拟消费者2消费较慢
+                             try {
+                                 TimeUnit.SECONDS.sleep(1);
+                             } catch (InterruptedException e) {
+                                 e.printStackTrace();
+                             }
+
+                             //手动确认
+                             //参数1： 手动确认消息的标识
+                             //参数2： false： 每次确认一个
+                             channel.basicAck(envelope.getDeliveryTag(), false);
+                         }
+                     });
+
+        3. fanout广播模式： 一个生产者 一个交换机 多个队列 多个队列  多个消费者
+            生产者发送消息只需要将消息发送到交换机，
+            每个消费者都有自己的临时队列，
+            每个临时队列都需要绑定到交换机，
+            交换机的类型为广播
+
+        4. routing路由模式 Direct交换机直连：
+                相比广播模式，在广播的基础上通过Routing key来制定消费者消费制定队列
+                中的消息， 消费者只会消费制定Routing key队列里面的消息
+                交换机的类型为Direct直连
+
+        5. Topic模式
 
