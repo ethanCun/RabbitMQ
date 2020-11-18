@@ -15,6 +15,7 @@
         <module>rabbitmq-routing</module>
         <module>rabbitmq-topic</module>
         <module>rabbitmq-springboot</module>
+        <module>rabbitmq-delay</module>
     </modules>
 
     <dependencyManagement>

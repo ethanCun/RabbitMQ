@@ -1,0 +1,13 @@
+
+spring:
+  application:
+    name: rabbitmq-delay-application
+  rabbitmq:
+    host: 49.235.231.176
+    port: 5672
+    username: user
+    password: 123456
+    virtual-host: vh01
+
+
+

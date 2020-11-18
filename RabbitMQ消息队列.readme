@@ -36,6 +36,34 @@ firewall-cmd --list-ports
 
     插件命令
     rabbitmq-plugins enable|list|disable
+    启动延时交换机插件： rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+
+# erlang下载链接：
+    https://www.erlang-solutions.com/resources/download.html
+
+#RabbitMQ下载地址，无需翻墙：
+    https://dl.bintray.com/rabbitmq/all/rabbitmq-server/3.8.9/
+
+# RabbitMQ插件下载地址：
+    https://www.rabbitmq.com/community-plugins.html
+    github地址：https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases
+
+//参考链接：https://blog.csdn.net/kinweini/article/details/83150199
+# linux查看rabbitmq的版本：
+    rpm -qa|grep rabbit
+
+# linux查看rabbitmq位置：
+    rpm -ql rabbitmq-server-3.6.6-1.el7.noarch
+
+# 安装了erlang之前注意彻底卸载原来版本的erlang, 不然总是报版本冲突错误:
+    find / -name erlang*
+    rm -rf 查找出来的erlang目录
+
+# 查看erlang安装位置：
+     whereis erlang
+
+# 查看erlang是否安装成功:
+     erl
 
 
 # mac使用brew安装，mac安装后，默认位置： /usr/local/Cellar/rabbitmq/<version>/ ;
@@ -129,4 +157,44 @@ RabbitMQ模型：
                 交换机的类型为Direct直连
 
         5. Topic模式
+
+
+RabbitMQ延时队列:
+
+    1. TTL方式：Time To Live
+        RabbitMQ可以针对队列设置x-expires，这样队列中所有的消息都有相同的过期时间，
+        或者针对Message设置x-message-ttl(对消息进行单独设置，每条消息TTL可以不同)，
+        如果超时(两者同时设置以最先到期的时间为准)，则消息变为dead letter(死信)；
+
+    2. DLX方式：Dead Letter Exchanges
+       RabbitMQ的Queue可以配置x-dead-letter-exchange和x-dead-letter-routing-key（可选）两个参数，
+       如果队列内出现了dead letter，则按照这两个参数重新路由转发到指定的队列。
+       x-dead-letter-exchange：
+        出现dead letter之后将dead letter重新发送到指定exchange。
+       x-dead-letter-routing-key：
+        出现dead letter之后将dead letter重新按照指定的routing-key发送。
+
+    3.
+
+
+RabbitMQ集群：
+    主备模式：
+        默认情况下，消息队列位于一个主节点上，尽管它们可以从所有节点看到和访问，
+        主节点挂了， 从节点为办法切换成主节点，
+        消费者连接的是从节点交换机的队列， 从节点会从主节点获取队列
+        从节点备份的仅仅是交换机， 不能同步子节点队列里面的消息；
+
+        主备架构：主要解决了某一时刻主节点怠机，可以对Queue中的信息进行备份；
+            这中架构没办法实现节点的选举；
+
+
+    镜像集群：
+        可以保证消息100%不丢失， 可以做到在主节点挂掉的情况下，从节点通过镜像的方式
+        进行消息同步。
+
+
+
+
+
+
 
