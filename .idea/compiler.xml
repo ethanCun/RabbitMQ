@@ -9,6 +9,7 @@
         <module name="rabbitmqfanout" />
         <module name="rabbitmqrouting" />
         <module name="rabbitmqsimple" />
+        <module name="rabbitmqspringboot" />
         <module name="rabbitmqtopic" />
         <module name="rabbitmqworkqueues" />
       </profile>
