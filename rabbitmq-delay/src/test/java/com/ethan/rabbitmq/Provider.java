@@ -28,6 +28,7 @@ public class Provider {
         map.put("name", "czy");
         map.put("age", 20);
 
+        //注意生产是在延时队列里面生产， 消费是在死信队列里面消费
         this.rabbitTemplate.convertAndSend("delayQueue", map, new MessagePostProcessor() {
 
             public Message postProcessMessage(Message message) throws AmqpException {

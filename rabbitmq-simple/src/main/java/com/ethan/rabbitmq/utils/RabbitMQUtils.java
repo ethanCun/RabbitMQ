@@ -23,8 +23,8 @@ public class RabbitMQUtils {
         connectionFactory.setHost("49.235.231.176");
         connectionFactory.setPort(5672);
         connectionFactory.setVirtualHost("vh01");
-        connectionFactory.setUsername("user");
-        connectionFactory.setPassword("123456");
+        connectionFactory.setUsername("guest");
+        connectionFactory.setPassword("guest");
     }
 
     public static Connection getConnection(){

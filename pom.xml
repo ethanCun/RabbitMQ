@@ -16,6 +16,7 @@
         <module>rabbitmq-topic</module>
         <module>rabbitmq-springboot</module>
         <module>rabbitmq-delay</module>
+        <module>rabbitmq-ack-message</module>
     </modules>
 
     <dependencyManagement>
@@ -38,7 +39,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.10</version>
+                <version>4.12</version>
             </dependency>
 
 

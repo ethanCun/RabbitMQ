@@ -1,12 +1,11 @@
 package com.ethan.rabbitmq;
 
 import com.ethan.rabbitmq.utils.RabbitMQUtils;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client.*;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.IOException;
 
 @SpringBootTest
 public class Provider {
@@ -19,6 +18,29 @@ public class Provider {
         Channel channel = RabbitMQUtils.getChannel("cc");
 
 
+        //监听消息是否发布到rabbitmq服务器
+        channel.addConfirmListener(new ConfirmListener() {
+
+            public void handleAck(long deliveryTag, boolean multiple) throws IOException {
+
+                System.out.println("消息发送成功并且在broker落地，deliveryTag是唯一标志符，在channek上发布的消息的deliveryTag都会比之前加1");
+            }
+
+            public void handleNack(long deliveryTag, boolean multiple) throws IOException {
+
+                System.out.println("消息发送失败或者落地失败");
+            }
+        });
+
+        channel.addReturnListener(new ReturnCallback() {
+
+            public void handle(Return returnMessage) {
+
+                System.out.println("处理消息");
+            }
+        });
+
+
         //通过通道发布消息
         //参数1： 交换机名称， 直连没有交换机， 为空
         //参数2： 队列名称
@@ -29,7 +51,6 @@ public class Provider {
                 "cc",
                 MessageProperties.PERSISTENT_TEXT_PLAIN,
                 "hello rabbitmq".getBytes());
-
 
         //关闭通道 关闭连接
         RabbitMQUtils.close();
